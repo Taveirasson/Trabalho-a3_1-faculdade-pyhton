@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>index</title>
 </head>
 <body>
@@ -15,14 +16,15 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-    <div class="container">
-        <h1>Bem-vindo à Página Inicial</h1>
-
-        <h2>Faça login aqui:</h2>
-        <a href="{{url_for('login')}}">Login</a>
     
-        <h2>Registre-se aqui</h2>
-        <a href="{{url_for('registro')}}">Registrar</a>
-    </div>
+    <div class="container">
+      <h1 class="container__titulo">Bem-vindo à Página Inicial</h1>
+
+      <h2 class="container__titulo__login">Faça login aqui:</h2>
+      <a class="container__link" href="{{url_for('login')}}">Login</a>
+  
+      <h2 class="container__titulo__registrar">Registre-se aqui</h2>
+      <a class="container__link" href="{{url_for('registro')}}">Registrar</a>
+  </div>
 </body>
 </html>
