@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Krona+One&family=Montserrat:wght@400;600&display=swap');
 
 :root {
-    --fonte-primaria:'Krona One', sans-serif;
-    --fonte-secundaria:'Montserrat', sans-serif;
+    --fonte-primaria: 'Krona One', sans-serif;
+    --fonte-secundaria: 'Montserrat', sans-serif;
 }
 
 body {
     background-color: #100f0f;
     font-family: var(--fonte-primaria);
     text-align: center;
-    padding: 10em 0;
-    gap: 100px;
+    padding: 2em 1em; /* Ajustando o padding para torná-lo mais compacto */
+    gap: 20px; /* Ajustando o gap para telas menores */
 }
 
 .container {
@@ -34,46 +34,46 @@ body {
     gap: 5px;
 }
 
-.container__link{
+.container {
     display: flex;
-    justify-content: center;
-    margin-left: 11%;
-    margin-top: 1%;
-    font-family: var(--fonte-secundaria);
-    text-decoration: none;
-    color: gray;
-    border: 2px solid;
-    width: 7%;
-    font-size: 25px;
+    flex-direction: column;
+    align-items: center; /* Adicionado para centralizar os itens horizontalmente */
+    text-align: center; /* Adicionado para centralizar o texto dentro dos links */
 }
 
-.container__link__regi{
-    display: flex;
-    justify-content: center;
-    
+.container__link {
+    display: block; /* Modificado para garantir que os links ocupem toda a largura disponível */
     margin-top: 1em;
     font-family: var(--fonte-secundaria);
     text-decoration: none;
     color: gray;
     border: 2px solid;
-    width: 7em;
-    font-size: 25px;
+    width: 100%;
+    max-width: 200px;
+    font-size: 1.5em;
+    padding: 10px; /* Adicionado um preenchimento interno para melhorar a aparência */
 }
 
-.container__botao{
-    display: flex;
-    justify-content: center;
-    margin-top: 1em;
-    margin-left: 11.8em;
-    font-family: var(--fonte-secundaria);
-    text-decoration: none;
-    color: #100f0f;
-    border: 2px solid;
-    width: 7em;
-    font-size: 25px
-}
-
-.container__link:hover{
+.container__link:hover {
     color: white;
-    
+}
+.container__link__regi,
+.container__botao {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Adicionado para centralizar verticalmente */
+    margin-top: 1em;
+    font-family: var(--fonte-secundaria);
+    text-decoration: none;
+    color: gray;
+    border: 2px solid;
+    width: 100%;
+    max-width: 200px;
+    font-size: 1.5em;
+    padding: 10px; /* Adicionado um preenchimento interno para melhorar a aparência */
+}
+
+.container__link__regi:hover,
+.container__botao:hover {
+    color: white;
 }
