@@ -1,14 +1,15 @@
+#importação das bibliotecas
 from flask import Flask, render_template, request, session, redirect, url_for, flash
 import mysql.connector, os, hashlib
 from datetime import datetime
 
 #inicia o flask
-
 app = Flask(__name__)
-app.secret_key = os.urandom(24) # Em resumo, app.secret_key = os.urandom(24) está configurando uma chave secreta forte para aumentar a segurança da aplicação Flask.
+
+#configurando uma chave secreta forte para aumentar a segurança da aplicação Flask.
+app.secret_key = os.urandom(24)
 
 # Conecta com mysql
-
 conexao = mysql.connector.connect(
     host='localhost',
     user = 'root',
@@ -16,16 +17,15 @@ conexao = mysql.connector.connect(
     database = 'atividade' )
 
 # Rota do index
-
 @app.route('/')
 def index():
     return render_template('index.html')
 
 #rota do registro
-
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
-    if request.method == 'POST': #Solicita e envia dados para o servidor
+    if request.method == 'POST':
+        #coleta dados do formulário de registro
         nome = request.form['nome']
         email = request.form['email']
         data_nasc = request.form['data_nasc']
@@ -35,9 +35,8 @@ def registro():
 
         cursor = conexao.cursor()
 
-        #tenta registrar no banco de dados, os dados do usuario
-
-        try:        
+        try:   
+            #tenta registrar no banco de dados, os dados do usuario     
             comando_insert = f"INSERT INTO usuario (nome, email, data_nasc, telefone, apelido, senha) VALUES ('{nome}', '{email}', '{data_nasc}', '{telefone}', '{apelido}', SHA2('{senha}', 256))"
             cursor.execute(comando_insert)
             conexao.commit()
@@ -46,10 +45,9 @@ def registro():
 
             flash('registro concluido!')
             return redirect(url_for('index'))
-        
-        #Verifica se ja existe esse usuario
 
         except mysql.connector.IntegrityError as e:
+            #Verifica se ja existe esse usuario
             conexao.rollback()
             cursor.close()
             flash('Erro: Email ou apelido já cadastrado. Escolha outros.')
@@ -57,10 +55,10 @@ def registro():
     return render_template('registro.html')
 
 #Rota do login
-
 @app.route('/login', methods=['POST','GET'])
 def login():
     if request.method == 'POST':
+        #coleta dados do formulário de login
         email = request.form['login']
         apelido = request.form['login']
         senha = request.form['senha']
@@ -71,9 +69,8 @@ def login():
 
         usuario = cursor.fetchone()
 
-        #Se o usuario for verdadeiro e a senha estiver correta ele entra na conta
-
         if usuario and hashlib.sha256(senha.encode()).hexdigest() == usuario[6]:
+            #autentica o usuario se as credenciais estiverem corretas
             session['usuario'] = usuario
             return redirect(url_for('dashboard'))
         else:
@@ -82,7 +79,6 @@ def login():
 
 
 #Rota do dashboard
-
 @app.route('/dashboard')
 def dashboard():
     if 'usuario' in session:
@@ -100,19 +96,16 @@ def dashboard():
     return redirect(url_for('login'))
 
 # Rota de logout
-
 @app.route('/logout')
 def logout():
     session.pop('usuario', None)
     return redirect(url_for('login'))
 
-#Exclui a conta
-
+#Rota da exclusão da conta
 @app.route('/excluir_conta', methods=['POST', 'GET'])
 def excluir_conta():
     if 'usuario' in session:
         usuario = session['usuario']
-
         if request.method == 'POST':
             senha = request.form['senha']
 
@@ -121,7 +114,8 @@ def excluir_conta():
             cursor.execute(comando_select)
             usuario_db = cursor.fetchone()
 
-            if usuario_db and hashlib.sha256(senha.encode()).hexdigest() == usuario[6]: #Verifica a senha e exclui
+            if usuario_db and hashlib.sha256(senha.encode()).hexdigest() == usuario[6]: 
+                #verifica a senha e exclui a conta
                 comando_delete = f"DELETE FROM usuario WHERE id = {usuario[0]}"
                 cursor.execute(comando_delete)
                 conexao.commit()
@@ -138,6 +132,6 @@ def excluir_conta():
  
     return redirect(url_for('login'))
 
-
+#executa o aplicativo flask
 if __name__ == '__main__':
     app.run(debug=True)
