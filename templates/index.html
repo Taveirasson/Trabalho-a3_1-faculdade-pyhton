@@ -7,6 +7,7 @@
     <title>index</title>
 </head>
 <body>
+  <div class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     {% for category, message in messages %}
@@ -17,7 +18,7 @@
     {% endif %}
     {% endwith %}
     
-    <div class="container">
+    
       <h1 class="container__titulo">Bem-vindo à Página Inicial</h1>
 
       <h2 class="container__titulo__login">Faça login aqui:</h2>

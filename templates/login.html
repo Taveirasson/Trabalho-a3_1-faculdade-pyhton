@@ -7,6 +7,7 @@
     <title>Login</title>
 </head>
 <body>
+  <div class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     {% for category, message in messages %}
@@ -16,7 +17,7 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-    <div class="container">
+ 
     <h1 class="container__titulo">Login</h1>
     <form method="post" action="{{ url_for('login') }}">
         <label for="login">Email ou seu apelido:</label>

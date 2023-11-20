@@ -7,18 +7,19 @@
     <title>Dashboard</title>
 </head>
 <body>
-    <div class="container"></div>
+    <div class="container">
         <h1 class="container__titulo">Bem-vindo, {{ session['usuario'][1] }}!</h1>
         <p>Email: {{session['usuario'][2]}}</p>
         <p>Data de Nascimento: {{ usuario_data_nasc.strftime('%d/%m/%Y') }}</p>
         <p>Telefone: {{ usuario[4] }}</p>
         <p>Apelido: {{ usuario[5] }}</p>
+    
         <a class="container__link" href="{{ url_for('logout') }}">Logout</a>
-
+        <br>
         <form method="post" action="{{ url_for('excluir_conta') }}" onsubmit="return confirm('Tem certeza que deseja excluir sua conta? Esta ação é irreversível.');">
-            <label for="senha">Digite sua senha para confirmar a exclusão:</label>
+            <label for="senha">Digite sua senha para confirmar a exclusão:</label><br>
             <input type="password" name="senha" required>
-            <input type="submit" value="Excluir Conta">
+            <button class="container__botao" type="submit">Excluir Conta</button>
         </form>
     </div>
 </body>

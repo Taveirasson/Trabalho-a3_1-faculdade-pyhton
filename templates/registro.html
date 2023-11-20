@@ -7,6 +7,7 @@
     <title>Registro</title>
 </head>
 <body>
+  <div class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     {% for category, message in messages %}
@@ -18,7 +19,7 @@
     {% endwith %}
 
     
-    <div class="container">
+    
 
     <h1 class="container__titulo">Página de Registro</h1>
     <form action="{{url_for('registro')}}" method="post">
@@ -50,7 +51,7 @@
             
     </form>
     
-    <p>Já tem uma conta? Faça <a  class="container__link" href="{{ url_for('login') }}">login aqui</a></p>  
+    <p>Já tem uma conta?<a  class="container__link" href="{{ url_for('login') }}"> faça login aqui</a></p>  
 
     </div>
 </body>
