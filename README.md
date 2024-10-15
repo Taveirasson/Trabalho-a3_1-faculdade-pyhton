@@ -10,4 +10,4 @@ Outros requisitos:
 
 ## Manutenção Realizada
 - **Tipo de Manutenção**: Correção de segurança
-- **Descrição da Manuntenção**: Verificar conexão ao banco de dados antes de realizar operação. Foi criado uma função para testar a conexão para evitar falhas, mudança feita na linha  13 di app.py
+- **Descrição da Manuntenção**: Verificar conexão ao banco de dados antes de realizar operação. Foi criado uma função para testar a conexão para evitar falhas, mudança feita na linha  13 do app.py
