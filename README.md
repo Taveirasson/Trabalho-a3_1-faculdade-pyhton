@@ -6,3 +6,8 @@ Para poder rodar este projeto é necessario ter instalado os seguindes requesito
 
 Outros requisitos:
     Bibliotecas python: pip, Flask, mysql-connector-python
+
+
+## Manutenção Planejada
+- **Tipo de Manutenção**: Correção de segurança
+- **Descrição da Manuntenção**: Verificar conexão ao banco de dados antes de realizar operação. 

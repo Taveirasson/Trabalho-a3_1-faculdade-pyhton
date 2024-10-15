@@ -9,12 +9,21 @@ app = Flask(__name__)
 #configurando uma chave secreta forte para aumentar a segurança da aplicação Flask.
 app.secret_key = os.urandom(24)
 
-# Conecta com mysql
-conexao = mysql.connector.connect(
-    host='localhost',
-    user = 'root',
-    password='root',
-    database = 'atividade' )
+#Testar conexão antes para melhorar segurança de dados
+def create_connection():
+    try:
+        conexao = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='',
+            database='atividade'
+        )
+        if conexao.is_connected():
+            return conexao
+    except mysql.connector.Error as e:
+        print(f"Erro na conexão: {e}")
+        return None
+    
 
 # Rota do index
 @app.route('/')
@@ -32,25 +41,26 @@ def registro():
         telefone = request.form['telefone']
         apelido = request.form['apelido']
         senha = request.form['senha']
+        conexao = create_connection()
+        if conexao:
+            cursor = conexao.cursor()
 
-        cursor = conexao.cursor()
+            try:   
+                #tenta registrar no banco de dados, os dados do usuario     
+                comando_insert = f"INSERT INTO usuario (nome, email, data_nasc, telefone, apelido, senha) VALUES ('{nome}', '{email}', '{data_nasc}', '{telefone}', '{apelido}', SHA2('{senha}', 256))"
+                cursor.execute(comando_insert)
+                conexao.commit()
 
-        try:   
-            #tenta registrar no banco de dados, os dados do usuario     
-            comando_insert = f"INSERT INTO usuario (nome, email, data_nasc, telefone, apelido, senha) VALUES ('{nome}', '{email}', '{data_nasc}', '{telefone}', '{apelido}', SHA2('{senha}', 256))"
-            cursor.execute(comando_insert)
-            conexao.commit()
+                cursor.close()
 
-            cursor.close()
+                flash('registro concluido!')
+                return redirect(url_for('index'))
 
-            flash('registro concluido!')
-            return redirect(url_for('index'))
-
-        except mysql.connector.IntegrityError as e:
-            #Verifica se ja existe esse usuario
-            conexao.rollback()
-            cursor.close()
-            flash('Erro: Email ou apelido já cadastrado. Escolha outros.')
+            except mysql.connector.IntegrityError as e:
+                #Verifica se ja existe esse usuario
+                conexao.rollback()
+                cursor.close()
+                flash('Erro: Email ou apelido já cadastrado. Escolha outros.')
 
     return render_template('registro.html')
 
@@ -63,18 +73,20 @@ def login():
         apelido = request.form['login']
         senha = request.form['senha']
 
-        cursor = conexao.cursor()
-        comando_select = f"SELECT id, nome, email, data_nasc, telefone, apelido, senha FROM usuario WHERE email = '{email}' OR apelido = '{apelido}'"
-        cursor.execute(comando_select)
+        conexao = create_connection()
+        if conexao:
+            cursor = conexao.cursor()
+            comando_select = f"SELECT id, nome, email, data_nasc, telefone, apelido, senha FROM usuario WHERE email = '{email}' OR apelido = '{apelido}'"
+            cursor.execute(comando_select)
 
-        usuario = cursor.fetchone()
+            usuario = cursor.fetchone()
 
-        if usuario and hashlib.sha256(senha.encode()).hexdigest() == usuario[6]:
-            #autentica o usuario se as credenciais estiverem corretas
-            session['usuario'] = usuario
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Erro: Usuário ou senha incorretos. Tente novamente.')
+            if usuario and hashlib.sha256(senha.encode()).hexdigest() == usuario[6]:
+                #autentica o usuario se as credenciais estiverem corretas
+                session['usuario'] = usuario
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Erro: Usuário ou senha incorretos. Tente novamente.')
     return render_template('login.html')
 
 
@@ -109,27 +121,29 @@ def excluir_conta():
         if request.method == 'POST':
             senha = request.form['senha']
 
-            cursor = conexao.cursor()
-            comando_select = f"SELECT nome, email, data_nasc, telefone, apelido, senha FROM usuario WHERE id = {usuario[0]}"
-            cursor.execute(comando_select)
-            usuario_db = cursor.fetchone()
+            conexao = create_connection()
+            if conexao:
+                cursor = conexao.cursor()
+                comando_select = f"SELECT nome, email, data_nasc, telefone, apelido, senha FROM usuario WHERE id = {usuario[0]}"
+                cursor.execute(comando_select)
+                usuario_db = cursor.fetchone()
 
-            if usuario_db and hashlib.sha256(senha.encode()).hexdigest() == usuario[6]: 
-                #verifica a senha e exclui a conta
-                comando_delete = f"DELETE FROM usuario WHERE id = {usuario[0]}"
-                cursor.execute(comando_delete)
-                conexao.commit()
-                
-                cursor.close()
-                session.pop('usuario', None)
-                flash('Conta excluida com sucesso!')
-                return redirect(url_for('index'))
-        
-            else:
-                flash('Erro: Senha incorreta. Tente novamente.')
+                if usuario_db and hashlib.sha256(senha.encode()).hexdigest() == usuario[6]: 
+                    #verifica a senha e exclui a conta
+                    comando_delete = f"DELETE FROM usuario WHERE id = {usuario[0]}"
+                    cursor.execute(comando_delete)
+                    conexao.commit()
+                    
+                    cursor.close()
+                    session.pop('usuario', None)
+                    flash('Conta excluida com sucesso!')
+                    return redirect(url_for('index'))
             
-            return redirect(url_for('dashboard'))
- 
+                else:
+                    flash('Erro: Senha incorreta. Tente novamente.')
+                
+                return redirect(url_for('dashboard'))
+    
     return redirect(url_for('login'))
 
 #executa o aplicativo flask
